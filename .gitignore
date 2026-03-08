@@ -13,3 +13,5 @@ md5sums
 
 debian/ripper/
 debian/.debhelper/
+debian/ripper.substvars
+debian/files
