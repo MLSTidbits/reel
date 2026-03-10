@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <!-- New Backup configuration group -->
+  <object class="AdwPreferencesGroup" id="config_group">
+    <property name="title">New Backup</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <child>
+      <!-- Source drive combo -->
+      <object class="AdwComboRow" id="source_row">
+        <property name="title">Source Drive</property>
+        <property name="subtitle">Select the drive to back up</property>
+      </object>
+    </child>
+    <child>
+      <!-- Destination folder row -->
+      <object class="AdwActionRow" id="dest_row">
+        <property name="title">Destination Folder</property>
+        <property name="activatable">true</property>
+        <child type="prefix">
+          <object class="GtkImage">
+            <property name="icon-name">folder-symbolic</property>
+          </object>
+        </child>
+        <child type="suffix">
+          <object class="GtkButton" id="dest_browse_btn">
+            <property name="icon-name">document-open-symbolic</property>
+            <property name="valign">center</property>
+            <style><class name="flat"/></style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- Options group -->
+  <object class="AdwPreferencesGroup" id="opts_group">
+    <property name="title">Options</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <child>
+      <object class="AdwSwitchRow" id="decrypt_row">
+        <property name="title">Decrypt content</property>
+        <property name="subtitle">Remove copy protection during backup</property>
+        <property name="active">true</property>
+      </object>
+    </child>
+    <child>
+      <object class="AdwSwitchRow" id="verify_row">
+        <property name="title">Verify backup</property>
+        <property name="subtitle">Re-read disc to verify integrity after backup</property>
+      </object>
+    </child>
+  </object>
+
+  <!-- Progress group (hidden until backup starts) -->
+  <object class="AdwPreferencesGroup" id="progress_group">
+    <property name="title">Progress</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <property name="visible">false</property>
+  </object>
+
+  <!-- Backup History group -->
+  <object class="AdwPreferencesGroup" id="history_group">
+    <property name="title">Backup History</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <child>
+      <object class="GtkListBox" id="history_list">
+        <style><class name="boxed-list"/></style>
+        <child>
+          <object class="GtkLabel" id="empty_label">
+            <property name="label">No backups yet</property>
+            <property name="margin-top">12</property>
+            <property name="margin-bottom">12</property>
+            <property name="halign">center</property>
+            <style><class name="dim-label"/></style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- Start Backup footer button -->
+  <object class="GtkButton" id="backup_btn">
+    <property name="label">Start Backup</property>
+    <property name="sensitive">false</property>
+    <style>
+      <class name="suggested-action"/>
+      <class name="pill"/>
+    </style>
+  </object>
+
+</interface>

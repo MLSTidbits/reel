@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <!-- Search bar -->
+  <object class="GtkSearchBar" id="search_bar">
+    <child>
+      <object class="GtkSearchEntry" id="search_entry">
+        <property name="placeholder-text">Filter log…</property>
+        <property name="hexpand">true</property>
+      </object>
+    </child>
+  </object>
+
+  <!-- Log text view (placed inside a ScrolledWindow in Python) -->
+  <object class="GtkTextView" id="text_view">
+    <property name="editable">false</property>
+    <property name="cursor-visible">false</property>
+    <property name="monospace">true</property>
+    <property name="wrap-mode">word-char</property>
+    <property name="left-margin">12</property>
+    <property name="right-margin">12</property>
+    <property name="top-margin">8</property>
+    <property name="bottom-margin">8</property>
+    <style><class name="log-view"/></style>
+  </object>
+
+  <!-- Status bar label -->
+  <object class="GtkLabel" id="line_count_label">
+    <property name="label">0 lines</property>
+    <style>
+      <class name="dim-label"/>
+      <class name="caption"/>
+    </style>
+  </object>
+
+  <!-- Save log file dialog title (used as initial_name) is set in Python -->
+
+</interface>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <!-- Optical Drives group -->
+  <object class="AdwPreferencesGroup" id="drives_group">
+    <property name="title">Optical Drives</property>
+    <child>
+      <object class="GtkListBox" id="drives_list">
+        <style><class name="boxed-list"/></style>
+      </object>
+    </child>
+  </object>
+
+  <!-- Disc info banner -->
+  <object class="AdwBanner" id="disc_info_bar">
+    <property name="title">Select a drive above to load disc information</property>
+    <property name="revealed">true</property>
+  </object>
+
+  <!-- Titles group -->
+  <object class="AdwPreferencesGroup" id="titles_group">
+    <property name="title">Titles</property>
+    <property name="description">Select the titles you want to rip.</property>
+    <child>
+      <object class="GtkListBox" id="titles_list">
+        <style><class name="boxed-list"/></style>
+      </object>
+    </child>
+  </object>
+
+  <!-- Select All button (set as header-suffix in Python) -->
+  <object class="GtkButton" id="select_all_btn">
+    <property name="label">Select All</property>
+    <style><class name="flat"/></style>
+  </object>
+
+  <!-- Rip progress group (hidden until ripping starts) -->
+  <object class="AdwPreferencesGroup" id="progress_group">
+    <property name="title">Rip Progress</property>
+    <property name="visible">false</property>
+  </object>
+
+  <!-- Current title label — shown above progress bar while ripping -->
+  <object class="GtkLabel" id="rip_title_label">
+    <property name="label"></property>
+    <property name="halign">start</property>
+    <property name="visible">false</property>
+    <style>
+      <class name="caption"/>
+    </style>
+  </object>
+
+  <!-- Rip / Cancel footer button — label and style toggled in Python -->
+  <object class="GtkButton" id="rip_btn">
+    <property name="label">Start Ripping</property>
+    <property name="sensitive">false</property>
+    <style>
+      <class name="suggested-action"/>
+      <class name="pill"/>
+    </style>
+  </object>
+
+</interface>

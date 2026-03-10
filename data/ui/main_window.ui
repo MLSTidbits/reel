@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       App menu (hamburger) — static items only; actions wired in Python
+       ═══════════════════════════════════════════════════════════════════ -->
+  <menu id="app_menu">
+    <section>
+      <item>
+        <attribute name="label">Refresh Drives</attribute>
+        <attribute name="action">win.refresh-drives</attribute>
+      </item>
+      <item>
+        <attribute name="label">Eject Disc</attribute>
+        <attribute name="action">win.eject-disc</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
+        <attribute name="label">Preferences</attribute>
+        <attribute name="action">win.settings</attribute>
+      </item>
+      <item>
+        <attribute name="label">About Ripper</attribute>
+        <attribute name="action">win.about</attribute>
+      </item>
+    </section>
+  </menu>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       Window geometry — MainWindow.__init__ reads these via get_object
+       ═══════════════════════════════════════════════════════════════════ -->
+  <object class="AdwApplicationWindow" id="window_geometry">
+    <property name="default-width">1080</property>
+    <property name="default-height">720</property>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       Window title widget — set_title_widget() called in Python
+       ═══════════════════════════════════════════════════════════════════ -->
+  <object class="AdwWindowTitle" id="win_title">
+    <property name="title">Ripper</property>
+    <property name="subtitle"></property>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       Rip-view header action buttons
+       ═══════════════════════════════════════════════════════════════════ -->
+  <object class="GtkBox" id="rip_actions">
+    <property name="spacing">4</property>
+    <property name="visible">false</property>
+    <child>
+      <object class="GtkButton" id="refresh_btn">
+        <property name="icon-name">view-refresh-symbolic</property>
+        <property name="tooltip-text">Refresh drives</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="eject_btn">
+        <property name="icon-name">media-eject-symbolic</property>
+        <property name="tooltip-text">Eject disc</property>
+      </object>
+    </child>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       Log-view header action buttons
+       ═══════════════════════════════════════════════════════════════════ -->
+  <object class="GtkBox" id="log_actions">
+    <property name="spacing">4</property>
+    <property name="visible">false</property>
+    <child>
+      <object class="GtkToggleButton" id="search_toggle">
+        <property name="icon-name">system-search-symbolic</property>
+        <property name="tooltip-text">Search log</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="save_log_btn">
+        <property name="icon-name">document-save-symbolic</property>
+        <property name="tooltip-text">Save log to file</property>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="clear_log_btn">
+        <property name="icon-name">edit-clear-all-symbolic</property>
+        <property name="tooltip-text">Clear log</property>
+      </object>
+    </child>
+  </object>
+
+  <!-- Backup-view header — empty placeholder -->
+  <object class="GtkBox" id="backup_actions">
+    <property name="visible">false</property>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       Sidebar navigation rows
+       ═══════════════════════════════════════════════════════════════════ -->
+  <object class="GtkListBoxRow" id="sidebar_row_rip">
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">12</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <child>
+          <object class="GtkImage">
+            <property name="icon-name">media-optical-dvd</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Rip Disc</property>
+            <property name="halign">start</property>
+            <property name="hexpand">true</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <object class="GtkListBoxRow" id="sidebar_row_backup">
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">12</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <child>
+          <object class="GtkImage">
+            <property name="icon-name">drive-harddisk-symbolic</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Backup</property>
+            <property name="halign">start</property>
+            <property name="hexpand">true</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <object class="GtkListBoxRow" id="sidebar_row_logs">
+    <child>
+      <object class="GtkBox">
+        <property name="spacing">12</property>
+        <property name="margin-start">12</property>
+        <property name="margin-end">12</property>
+        <property name="margin-top">10</property>
+        <property name="margin-bottom">10</property>
+        <child>
+          <object class="GtkImage">
+            <property name="icon-name">text-x-script-symbolic</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="label">Logs</property>
+            <property name="halign">start</property>
+            <property name="hexpand">true</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       About dialog — all static strings in one place
+       ═══════════════════════════════════════════════════════════════════ -->
+  <object class="AdwAboutDialog" id="about_dialog">
+    <property name="application-name">Ripper</property>
+    <property name="application-icon">media-optical-dvd</property>
+    <property name="developer-name">Community</property>
+    <property name="website">https://github.com/makemkv/gui</property>
+    <property name="comments">A GTK4 front-end for MakeMKV on Linux.</property>
+    <property name="copyright">Copyright © 2026 MLS Tidbits</property>
+    <property name="license-type">gpl-3-0</property>
+  </object>
+
+</interface>

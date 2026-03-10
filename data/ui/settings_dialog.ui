@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       GENERAL PAGE
+       ═══════════════════════════════════════════════════════════ -->
+  <object class="AdwPreferencesPage" id="page_general">
+    <property name="title">General</property>
+    <property name="icon-name">preferences-system-symbolic</property>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="licence_group">
+        <property name="title">Licence</property>
+        <child>
+          <object class="AdwEntryRow" id="key_row">
+            <property name="title">Licence Key (app_Key)</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="lang_group">
+        <property name="title">Language</property>
+        <child>
+          <object class="AdwEntryRow" id="iface_lang_row">
+            <property name="title">UI Language (app_InterfaceLanguage)</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwEntryRow" id="pref_lang_row">
+            <property name="title">Audio / Subtitle Language (app_PreferredLanguage)</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="net_group">
+        <property name="title">Network</property>
+        <child>
+          <object class="AdwEntryRow" id="proxy_row">
+            <property name="title">HTTP Proxy (app_Proxy)</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="ui_group">
+        <property name="title">Interface</property>
+        <child>
+          <object class="AdwSwitchRow" id="expert_row">
+            <property name="title">Expert Mode (app_ExpertMode)</property>
+            <property name="subtitle">Enable advanced mode in MakeMKV</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwComboRow" id="profile_row">
+            <property name="title">Default Profile (app_DefaultProfileName)</property>
+            <property name="subtitle">Output profile used when ripping</property>
+            <property name="visible">false</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       OUTPUT PAGE
+       ═══════════════════════════════════════════════════════════ -->
+  <object class="AdwPreferencesPage" id="page_output">
+    <property name="title">Output</property>
+    <property name="icon-name">folder-symbolic</property>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="dest_group">
+        <property name="title">Destination</property>
+        <child>
+          <object class="AdwEntryRow" id="dest_dir_row">
+            <property name="title">Output Folder (app_DestinationDir)</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwComboRow" id="dest_type_row">
+            <property name="title">Output Mode (app_DestinationType)</property>
+            <property name="subtitle">None and Auto grey out the destination path</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="backup_group">
+        <property name="title">Backup</property>
+        <child>
+          <object class="AdwSwitchRow" id="backup_decrypt_row">
+            <property name="title">Decrypt Content (app_BackupDecrypted)</property>
+            <property name="subtitle">Remove copy protection when performing a disc backup</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="naming_group">
+        <property name="title">Naming (GUI only)</property>
+        <child>
+          <object class="AdwSwitchRow" id="use_title_row">
+            <property name="title">Use Disc Title for Subfolder</property>
+            <property name="subtitle">Create a subfolder named after the disc inside the output folder</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       DVD PAGE
+       ═══════════════════════════════════════════════════════════ -->
+  <object class="AdwPreferencesPage" id="page_dvd">
+    <property name="title">DVD</property>
+    <property name="icon-name">media-optical-dvd</property>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="title_filter_group">
+        <property name="title">Title Filtering</property>
+        <child>
+          <!-- SpinRow value set in Python after add() -->
+          <object class="AdwSpinRow" id="min_length_row">
+            <property name="title">Minimum Title Length (dvd_MinimumTitleLength)</property>
+            <property name="subtitle">Titles shorter than this many seconds are hidden</property>
+            <property name="climb-rate">1</property>
+            <property name="digits">0</property>
+            <property name="adjustment">
+              <object class="GtkAdjustment" id="min_length_adj">
+                <property name="lower">0</property>
+                <property name="upper">7200</property>
+                <property name="step-increment">1</property>
+                <property name="page-increment">60</property>
+              </object>
+            </property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="sp_group">
+        <property name="title">Subpicture Removal</property>
+        <property name="description">dvd_SPRemoveMethod — controls how DVD subpicture / forced subs are handled</property>
+        <child>
+          <object class="AdwComboRow" id="sp_remove_row">
+            <property name="title">Removal Method (dvd_SPRemoveMethod)</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       I/O PAGE
+       ═══════════════════════════════════════════════════════════ -->
+  <object class="AdwPreferencesPage" id="page_io">
+    <property name="title">I/O</property>
+    <property name="icon-name">drive-optical-symbolic</property>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="io_group">
+        <property name="title">Read Settings</property>
+        <property name="description">Tune disc reading behaviour for problem discs or slow drives</property>
+        <child>
+          <object class="AdwSpinRow" id="retry_row">
+            <property name="title">Error Retry Count (io_ErrorRetryCount)</property>
+            <property name="subtitle">Number of times to retry a failed sector read (0 = no retry)</property>
+            <property name="climb-rate">1</property>
+            <property name="digits">0</property>
+            <property name="adjustment">
+              <object class="GtkAdjustment" id="retry_adj">
+                <property name="lower">0</property>
+                <property name="upper">100</property>
+                <property name="step-increment">1</property>
+                <property name="page-increment">5</property>
+              </object>
+            </property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwComboRow" id="rbuf_row">
+            <property name="title">Read Buffer Size (io_RBufSizeMB)</property>
+            <property name="subtitle">Auto lets MakeMKV decide</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="sdf_group">
+        <property name="title">Error Handling</property>
+        <child>
+          <object class="AdwSwitchRow" id="sdf_stop_row">
+            <property name="title">Stop on SDF Error (sdf_Stop)</property>
+            <property name="subtitle">Halt processing when a structural defect error is encountered</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       TOOLS PAGE
+       ═══════════════════════════════════════════════════════════ -->
+  <object class="AdwPreferencesPage" id="page_tools">
+    <property name="title">Tools</property>
+    <property name="icon-name">applications-engineering-symbolic</property>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="tools_group">
+        <property name="title">External Tool Paths</property>
+        <property name="description">Leave blank to use system PATH defaults</property>
+        <child>
+          <object class="AdwEntryRow" id="ccextractor_row">
+            <property name="title">ccextractor Binary (app_ccextractor)</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwEntryRow" id="java_row">
+            <property name="title">Java Binary — for BD-J menus (app_Java)</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- ═══════════════════════════════════════════════════════════
+       APP PAGE (GUI-only settings)
+       ═══════════════════════════════════════════════════════════ -->
+  <object class="AdwPreferencesPage" id="page_app">
+    <property name="title">App</property>
+    <property name="icon-name">preferences-desktop-symbolic</property>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="app_note_group">
+        <property name="title">GUI Preferences</property>
+        <property name="description">Stored in ~/.config/makemkv-gui/settings.json — not read by makemkvcon.</property>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="binary_group">
+        <property name="title">Binary</property>
+        <child>
+          <object class="AdwEntryRow" id="binary_row">
+            <property name="title">Path to makemkvcon</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <child>
+      <object class="AdwPreferencesGroup" id="behaviour_group">
+        <property name="title">Behaviour</property>
+        <child>
+          <object class="AdwSwitchRow" id="auto_rip_row">
+            <property name="title">Auto-rip on Disc Insert</property>
+            <property name="subtitle">Automatically start ripping when a disc is detected</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="eject_row">
+            <property name="title">Eject Disc When Done</property>
+            <property name="subtitle">Open the drive tray after a successful rip</property>
+          </object>
+        </child>
+        <child>
+          <object class="AdwSwitchRow" id="notify_row">
+            <property name="title">Desktop Notifications</property>
+            <property name="subtitle">Show a notification when ripping finishes</property>
+          </object>
+        </child>
+      </object>
+    </child>
+
+    <!-- Save / Reload buttons — rendered in Python as a GtkBox -->
+    <child>
+      <object class="AdwPreferencesGroup" id="action_group">
+      </object>
+    </child>
+  </object>
+
+</interface>
