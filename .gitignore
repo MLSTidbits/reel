@@ -10,8 +10,12 @@ changelog
 version
 md5sums
 
-debian/ripper/
+debian/makemkv-gtk/
+debian/makemkv-bin/
+
 debian/.debhelper/
-debian/ripper.substvars
+
+debian/makemkv-gtk.substvars
 debian/files
+
 __pycache__/
