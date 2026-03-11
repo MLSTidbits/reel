@@ -14,7 +14,7 @@ from gi.repository import Gtk, Adw, Gio
 from ui.disc_view import DiscView
 from ui.backup_view import BackupView
 from ui.log_view import LogView
-from ui.settings_dialog import SettingsDialog
+from ui.settings_dialog import SettingsDialog, GUI_CONFIG_PATH, _load_gui, _save_gui
 from core.version import get_version
 from core.makemkv_controller import MakeMKVController
 
@@ -29,12 +29,17 @@ class MainWindow(Adw.ApplicationWindow):
 
         self.controller = MakeMKVController()
         self._load_ui()
-        self.set_default_size(self._default_width, self._default_height)
+        # Use saved window size if available, otherwise fall back to XML defaults
+        _gui = _load_gui()
+        w = _gui.get("window_width",  self._default_width)
+        h = _gui.get("window_height", self._default_height)
+        self.set_default_size(w, h)
         self._build_chrome()
         self._setup_actions()
         self._setup_views()
-        self.connect("destroy", self._on_destroy)
-        self.connect("map",     self._on_map)
+        self.connect("destroy",       self._on_destroy)
+        self.connect("close-request", self._on_close_request)
+        self.connect("map",           self._on_map)
 
     def _on_map(self, *_):
         self.controller.emit_binary_missing_if_needed()
@@ -62,6 +67,16 @@ class MainWindow(Adw.ApplicationWindow):
         if response == "website":
             import subprocess as _sp
             _sp.Popen(["xdg-open", "https://www.makemkv.com/download/"])
+
+    def _on_close_request(self, *_):
+        """Fires before the window is unmapped — safe to read current size."""
+        w, h = self.get_width(), self.get_height()
+        if w > 0 and h > 0:
+            _gui = _load_gui()
+            _gui["window_width"]  = w
+            _gui["window_height"] = h
+            _save_gui(_gui)
+        return False  # allow the close to proceed
 
     def _on_destroy(self, *_):
         self.controller.shutdown()
