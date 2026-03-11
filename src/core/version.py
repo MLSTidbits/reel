@@ -6,7 +6,7 @@ Installed path : /usr/share/ripper/version
 Development    : <project>/doc/version
 """
 
-from core.paths import data_file
+from core.paths import doc_file
 
 
 def get_version() -> str:
