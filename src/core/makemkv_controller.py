@@ -323,9 +323,14 @@ class MakeMKVController(GObject.Object):
             destination=dest,
             title_indices=[t.index for t in selected],
             custom_filenames={
-                t.index: t.output_file_name
+                t.index: t.output_file_name.strip()
                 for t in selected
+                # Only treat as custom if the name differs from the
+                # makemkvcon default (title_tNN.mkv).  The parser
+                # pre-populates output_file_name with that default, so
+                # a plain strip() check would always be True.
                 if t.output_file_name.strip()
+                and t.output_file_name.strip() != f"title_t{t.index:02d}.mkv"
             },
         )
         self._current_rip = job
@@ -361,7 +366,6 @@ class MakeMKVController(GObject.Object):
             title_size = next(
                 (t.size_bytes for t in self._titles if t.index == title_idx), 0
             )
-            written_file: str = ""
             try:
                 self._active_proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
                 proc = self._active_proc
@@ -374,28 +378,28 @@ class MakeMKVController(GObject.Object):
                         base = i / len(job.title_indices)
                         overall = base + fraction / len(job.title_indices)
                         GLib.idle_add(self.emit, "progress", overall, status)
-                    # makemkvcon reports the output file on a line like:
-                    # MSG:5059,…,"…title_t00.mkv"
-                    if "title_t" in line and ".mkv" in line:
-                        import re as _re
-                        m = _re.search(r'title_t[0-9]+[.]mkv', line)
-                        if m:
-                            written_file = m.group(0)
                 proc.wait()
                 self._active_proc = None
                 if proc.returncode != 0:
                     success = False
-                elif title_idx in job.custom_filenames and written_file:
-                    # Rename the output file to the user-specified name
+                # Rename regardless of returncode — makemkvcon sometimes exits
+                # non-zero on minor warnings even after writing the file.
+                if title_idx in job.custom_filenames:
                     import os as _os
-                    custom = job.custom_filenames[title_idx]
+                    custom = job.custom_filenames[title_idx].strip()
                     if not custom.endswith(".mkv"):
                         custom += ".mkv"
-                    src = _os.path.join(job.destination, written_file)
-                    dst = _os.path.join(job.destination, custom)
-                    if _os.path.isfile(src):
-                        _os.rename(src, dst)
-                        self._emit_log("OK", f"Renamed: {written_file} → {custom}")
+                    # makemkvcon always names output title_tNN.mkv
+                    # where NN is the zero-padded title index.
+                    default_name = f"title_t{title_idx:02d}.mkv"
+                    src_path = _os.path.join(job.destination, default_name)
+                    dst_path = _os.path.join(job.destination, custom)
+                    if _os.path.isfile(src_path):
+                        _os.rename(src_path, dst_path)
+                        self._emit_log("OK", f"Renamed: {default_name} → {custom}")
+                    else:
+                        self._emit_log("WARNING",
+                            f"Rename skipped: {default_name} not found in {job.destination}")
             except Exception as e:
                 GLib.idle_add(self.emit, "error", str(e))
                 success = False
