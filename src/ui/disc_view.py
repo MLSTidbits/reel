@@ -284,7 +284,7 @@ class DiscView(Gtk.Box):
                 self._drives_list.append(DriveRow(drive))
         else:
             self._drives_list.append(
-                Adw.ActionRow(title="No optical drives detected")
+                Adw.ActionRow(title="Insert a DVD or Blu-ray", subtitle="No optical drives detected", activatable=False)
             )
             self.clear()
 

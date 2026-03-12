@@ -226,8 +226,8 @@ class MakeMKVController(GObject.Object):
                 self._emit_log("WARNING", f"Eject returned non-zero: {err}")
         except FileNotFoundError:
             self._emit_log("ERROR", "'eject' command not found. Install it with your package manager.")
-        except subprocess.TimeoutExpired:
-            self._emit_log("ERROR", f"Eject timed out for {device_path}")
+        # except subprocess.TimeoutExpired:
+        #     self._emit_log("ERROR", f"Eject timed out for {device_path}")
         except Exception as e:
             self._emit_log("ERROR", str(e))
         # Re-scan drives so the UI reflects the empty tray

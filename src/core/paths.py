@@ -2,10 +2,10 @@
 paths.py — Resolve runtime data paths for both installed and development layouts.
 
 Installed layout (after `make install` or package install):
-  /usr/lib/ripper/ui/        <- src/ui/   Python modules
-  /usr/lib/ripper/core/      <- src/core/ Python modules
-  /usr/share/ripper/ui/      <- data/ui/  GtkBuilder XML files
-  /usr/share/doc/ripper/     <- doc/      version, README, changelog, etc.
+  /usr/lib/makemkv-gtk/ui/        <- src/ui/   Python modules
+  /usr/lib/makemkv-gtk/core/      <- src/core/ Python modules
+  /usr/share/makemkv-gtk/ui/      <- data/ui/  GtkBuilder XML files
+  /usr/share/doc/makemkv-gtk/     <- doc/      version, README, changelog, etc.
 
 Development layout (running from source tree via run.sh):
   <project>/src/ui/
@@ -20,17 +20,17 @@ The resolution order for each path type:
 
 import os
 
-# This file lives at /usr/lib/ripper/core/paths.py (installed)
+# This file lives at /usr/lib/makemkv-gtk/core/paths.py (installed)
 # or <project>/src/core/paths.py (development).
 # Either way: dirname(__file__) = .../core/
-#             dirname(dirname(__file__)) = /usr/lib/ripper  OR  <project>/src
+#             dirname(dirname(__file__)) = /usr/lib/makemkv-gtk  OR  <project>/src
 
 _HERE = os.path.dirname(os.path.abspath(__file__))   # .../core
-_LIB  = os.path.dirname(_HERE)                        # /usr/lib/ripper  OR  src/
+_LIB  = os.path.dirname(_HERE)                        # /usr/lib/makemkv-gtk  OR  src/
 
 # Installed paths
-_SHARE_DIR = "/usr/share/ripper"
-_DOC_DIR   = "/usr/share/doc/ripper"
+_SHARE_DIR = "/usr/share/makemkv-gtk"
+_DOC_DIR   = "/usr/share/doc/makemkv-gtk"
 
 # Development paths (two levels up from src/core/ reaches the project root)
 _PROJECT_ROOT    = os.path.dirname(_LIB)
@@ -56,7 +56,7 @@ def doc_file(name: str) -> str:
     Return the full path to a documentation/metadata file,
     e.g. doc_file("version"), doc_file("README.md"), doc_file("changelog").
 
-    Installed: /usr/share/doc/ripper/<name>
+    Installed: /usr/share/doc/makemkv-gtk/<name>
     Source:    <project>/doc/<name>
     """
     return _resolve(
