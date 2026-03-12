@@ -11,7 +11,7 @@ Comment=Rip and backup Blu-ray and DVD discs using MakeMKV
 Icon=makemkv-gtk
 
 # Full path when installed; use the run.sh wrapper during development
-Exec=makemkv-gui %U
+Exec=makemkv- %U
 
 Terminal=false
 StartupNotify=true
@@ -32,5 +32,5 @@ Actions=new-rip;
 
 [Desktop Action new-rip]
 Name=Rip a Disc
-Exec=makemkv-gui
+Exec=makemkv-gtk
 Icon=media-optical-dvd
