@@ -15,7 +15,7 @@ Exec=makemkv-gui %U
 
 Terminal=false
 StartupNotify=true
-StartupWMClass=makemkv-gui
+StartupWMClass=makemkv-gtk
 
 # Reverse-DNS application ID — matches the Adw.Application application_id
 # and the GSettings schema prefix if added later
