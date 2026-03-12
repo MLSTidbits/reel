@@ -18,6 +18,7 @@ gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, Adw
 from core.makemkv_config import MakeMKVConfig
+from core.languages import get_languages, get_system_language_code
 from core.paths import ui_file as _ui_file
 
 _UI_FILE = _ui_file("settings_dialog.ui")
@@ -214,8 +215,21 @@ class SettingsDialog:
 
         # Populate values
         self._key_row.set_text(self._mkv.get_str("app_Key", ""))
-        self._iface_lang_row.set_text(self._mkv.get_str("app_InterfaceLanguage", "en"))
-        self._pref_lang_row.set_text(self._mkv.get_str("app_PreferredLanguage", "eng"))
+
+        # Build language dropdowns from system ISO 639-2 data
+        self._lang_list = get_languages()   # [(display_name, code), ...]
+        lang_model = Gtk.StringList()
+        for display_name, _ in self._lang_list:
+            lang_model.append(display_name)
+        # Both rows share the same model (read-only StringList is safe to reuse)
+        self._iface_lang_row.set_model(lang_model)
+        self._pref_lang_row.set_model(lang_model)
+
+        sys_code = get_system_language_code()
+        iface_code = self._mkv.get_str("app_InterfaceLanguage", sys_code)
+        pref_code  = self._mkv.get_str("app_PreferredLanguage",  sys_code)
+        self._iface_lang_row.set_selected(self._lang_index(iface_code, sys_code))
+        self._pref_lang_row.set_selected(self._lang_index(pref_code,  sys_code))
         self._proxy_row.set_text(self._mkv.get_str("app_Proxy", ""))
         self._expert_row.set_active(self._mkv.get_bool("app_ExpertMode", False))
         self._profile_row.set_selected(
@@ -286,6 +300,25 @@ class SettingsDialog:
     #  Helper widgets                                                      #
     # ------------------------------------------------------------------ #
 
+    def _lang_index(self, code: str, fallback: str) -> int:
+        """Return the combo index for an ISO 639-2 code, or fallback code index."""
+        code = code.strip().lower()
+        for i, (_, c) in enumerate(self._lang_list):
+            if c == code:
+                return i
+        fallback = fallback.strip().lower()
+        for i, (_, c) in enumerate(self._lang_list):
+            if c == fallback:
+                return i
+        return 0
+
+    def _lang_code(self, row) -> str:
+        """Return the ISO 639-2 code for the currently selected combo index."""
+        idx = row.get_selected()
+        if 0 <= idx < len(self._lang_list):
+            return self._lang_list[idx][1]
+        return "eng"
+
     def _update_profile_visibility(self, expert_on: bool):
         self._profile_row.set_visible(expert_on)
 
@@ -345,8 +378,8 @@ class SettingsDialog:
     def _on_save(self, _btn):
         # ── settings.conf ──
         self._mkv.set_str("app_Key",               self._key_row.get_text())
-        self._mkv.set_str("app_InterfaceLanguage", self._iface_lang_row.get_text())
-        self._mkv.set_str("app_PreferredLanguage", self._pref_lang_row.get_text())
+        self._mkv.set_str("app_InterfaceLanguage", self._lang_code(self._iface_lang_row))
+        self._mkv.set_str("app_PreferredLanguage", self._lang_code(self._pref_lang_row))
         self._mkv.set_str("app_Proxy",             self._proxy_row.get_text())
         self._mkv.set_bool("app_ExpertMode",        self._expert_row.get_active())
 

@@ -111,15 +111,9 @@ class MainWindow(Adw.ApplicationWindow):
         self._save_log_btn   = self._builder.get_object("save_log_btn")
         self._clear_log_btn  = self._builder.get_object("clear_log_btn")
 
-        # Sidebar rows (pre-built in XML)
-        self._sidebar_rows = {
-            "rip":    self._builder.get_object("sidebar_row_rip"),
-            "backup": self._builder.get_object("sidebar_row_backup"),
-            "logs":   self._builder.get_object("sidebar_row_logs"),
-        }
 
     # ------------------------------------------------------------------ #
-    #  Build chrome (header bar + sidebar + stack)                         #
+    #  Build chrome (header bar + vertical-tab notebook)                   #
     # ------------------------------------------------------------------ #
 
     def _build_chrome(self):
@@ -131,10 +125,8 @@ class MainWindow(Adw.ApplicationWindow):
 
         # ── Header bar ───────────────────────────────────────────────── #
         self._header = Adw.HeaderBar()
-
         self._header.set_title_widget(self._win_title)
 
-        # Hamburger menu — model comes from XML
         menu_btn = Gtk.MenuButton(
             icon_name="open-menu-symbolic",
             tooltip_text="Main Menu",
@@ -142,7 +134,6 @@ class MainWindow(Adw.ApplicationWindow):
         )
         self._header.pack_end(menu_btn)
 
-        # Add action groups (from XML) to header; wire button signals
         for widget in self._header_actions.values():
             self._header.pack_end(widget)
 
@@ -151,38 +142,15 @@ class MainWindow(Adw.ApplicationWindow):
 
         root_toolbar.add_top_bar(self._header)
 
-        # ── Body ─────────────────────────────────────────────────────── #
-        body = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        root_toolbar.set_content(body)
-
-        sidebar_frame = Gtk.Box(
-            orientation=Gtk.Orientation.VERTICAL,
-            width_request=200,
-        )
-        sidebar_frame.add_css_class("sidebar")
-
-        self._sidebar_list = Gtk.ListBox(
-            selection_mode=Gtk.SelectionMode.SINGLE,
-            css_classes=["navigation-sidebar"],
+        # ── Vertical-tab notebook (tabs on left) ──────────────────────── #
+        self._notebook = Gtk.Notebook(
+            tab_pos=Gtk.PositionType.TOP,
+            show_border=False,
             vexpand=True,
-        )
-        self._sidebar_list.connect("row-selected", self._on_sidebar_row_selected)
-
-        # Insert the pre-built sidebar rows from XML
-        for row in self._sidebar_rows.values():
-            self._sidebar_list.append(row)
-
-        sidebar_frame.append(self._sidebar_list)
-        body.append(sidebar_frame)
-        body.append(Gtk.Separator(orientation=Gtk.Orientation.VERTICAL))
-
-        self._stack = Gtk.Stack(
-            transition_type=Gtk.StackTransitionType.CROSSFADE,
-            transition_duration=150,
             hexpand=True,
-            vexpand=True,
         )
-        body.append(self._stack)
+        self._notebook.connect("switch-page", self._on_page_switched)
+        root_toolbar.set_content(self._notebook)
 
     # ------------------------------------------------------------------ #
     #  Actions & Views                                                     #
@@ -213,20 +181,29 @@ class MainWindow(Adw.ApplicationWindow):
             0,
         )
 
-        # Stack name → (view widget, sidebar row id, header actions id)
+        # (name, view widget, icon-name, label, header-actions-key)
         self._views = [
-            ("rip",    self.disc_view),
-            ("backup", self.backup_view),
-            ("logs",   self.log_view),
+            ("rip",    self.disc_view,   "media-optical-dvd",       "Rip Disc", "rip"),
+            ("backup", self.backup_view, "drive-harddisk-symbolic",  "Backup",  "backup"),
+            ("logs",   self.log_view,    "text-x-script-symbolic",   "Logs",    "logs"),
         ]
 
-        for name, widget in self._views:
-            self._stack.add_named(widget, name)
+        for _name, widget, icon_name, label, _key in self._views:
+            tab_box = Gtk.Box(
+                orientation=Gtk.Orientation.HORIZONTAL,
+                spacing=6,
+                margin_top=4,
+                margin_bottom=4,
+                margin_start=6,
+                margin_end=6,
+            )
+            tab_box.append(Gtk.Image.new_from_icon_name(icon_name))
+            tab_box.append(Gtk.Label(label=label))
+            self._notebook.append_page(widget, tab_box)
 
-        # Select first row → triggers row-selected → shows disc_view
-        self._sidebar_list.select_row(
-            self._sidebar_list.get_row_at_index(0)
-        )
+        # Switch to first page → triggers switch-page → shows rip actions
+        self._notebook.set_current_page(0)
+        self._on_page_switched(self._notebook, self.disc_view, 0)
 
         self.controller.connect("drives-updated",  self._on_drives_updated)
         self.controller.connect("rip-started",     self._on_rip_started)
@@ -249,16 +226,12 @@ class MainWindow(Adw.ApplicationWindow):
     #  Callbacks                                                           #
     # ------------------------------------------------------------------ #
 
-    def _on_sidebar_row_selected(self, listbox, row):
-        if row is None:
+    def _on_page_switched(self, _notebook, _page, page_num: int):
+        if not (0 <= page_num < len(self._views)):
             return
-        idx = row.get_index()
-        if not (0 <= idx < len(self._views)):
-            return
-        name, _widget = self._views[idx]
-        self._stack.set_visible_child_name(name)
+        _name, _widget, _icon, _label, actions_key = self._views[page_num]
         for key, widget in self._header_actions.items():
-            widget.set_visible(key == name)
+            widget.set_visible(key == actions_key)
 
     def _on_settings(self, action, param):
         SettingsDialog().present(self)
