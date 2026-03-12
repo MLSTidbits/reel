@@ -1,4 +1,4 @@
-data/mlstidbits.com.makemkv-gtk.desktop usr/share/applications/
+data/makemkv-gtk.desktop usr/share/applications/
 data/icon/makemkv-gtk.svg usr/share/icons/hicolor/scalable/apps/
 data/ui/backup_view.ui usr/share/makemkv-gtk/
 data/ui/main_window.ui usr/share/makemkv-gtk/
