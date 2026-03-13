@@ -26,6 +26,7 @@ class MainWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
+        self.set_icon_name("reel")
         self.controller = MakeMKVController()
         self._load_ui()
         # Use saved window size if available, otherwise fall back to XML defaults
@@ -48,7 +49,7 @@ class MainWindow(Adw.ApplicationWindow):
             heading="MakeMKV Not Found",
             body=(
                 "The makemkvcon binary could not be found on your system.\n\n"
-                "Install MakeMKV to use Ripper:\n"
+                "Install MakeMKV to use Reel:\n"
                 "  sudo add-apt-repository ppa:heyarje/makemkv-beta\n"
                 "  sudo apt install makemkv-bin makemkv-oss"
             ),

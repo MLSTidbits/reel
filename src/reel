@@ -1,13 +1,10 @@
-#!/usr/bin/env bash
+#!/usr/bin/env python3
+# Launcher for Reel — sets argv[0] so the shell sees "reel" not "python3"
+import sys
+import os
 
-# Start the MakeMKV GUI from the /usr/lib/makemkv-gtk
+sys.argv[0] = "reel"
+sys.path.insert(0, "/usr/lib/reel")
 
-# Uncomment the following line to enable debugging output
-# set -xo pipefail
-
-APP_DIR="/usr/lib/reel"
-PYTHONPATH="${APP_DIR}${PYTHONPATH:+:$PYTHONPATH}"
-
-export PYTHONPATH
-
-exec python3 "${APP_DIR}/main.py" "$@"
+from main import main
+sys.exit(main())
