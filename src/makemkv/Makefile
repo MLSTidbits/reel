@@ -30,12 +30,12 @@ MMCCX_SRC    := $(patsubst %,mmccextr/%,$(MMCCEXTR_SRC))
 
 .PHONY: all clean install rebuild
 
-all: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/mmgplsrv
+all: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/mmgplsrv out/makemkv.bin.full
 
 clean:
 	-rm -rf out tmp
 
-install: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/mmgplsrv
+install: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/mmgplsrv out/makemkv.bin.full
 	$(INSTALL) -D -m 644 out/libdriveio.so.0  $(DESTDIR)$(libdir)/libdriveio.so.0
 	$(INSTALL) -D -m 644 out/libmakemkv.so.1  $(DESTDIR)$(libdir)/libmakemkv.so.1
 	$(INSTALL) -D -m 644 out/libmmbd.so.0     $(DESTDIR)$(libdir)/libmmbd.so.0
@@ -121,6 +121,13 @@ out/mmgplsrv.full: $(MMGPL_SRC)
 	$(MMGPL_DEF) -D_GNU_SOURCE -Dstl=std \
 	-o$@ $(MMGPL_SRC) $(MMGPL_SRC_LINUX) -lc -lstdc++ \
 	-ffunction-sections -Wl,--gc-sections -Wl,-z,defs
+
+# ── MakeMKV binary ──────────────────────────────────────────────────────────────── #
+
+out/makemkv.bin.full: out/libmakemkv.so.1 out/libmmbd.so.0 out/libdriveio.so.0
+	@mkdir -p out
+	@echo "$@"
+	@cp bin/makemkvcon out/
 
 # ── Build info header ─────────────────────────────────────────────────────── #
 

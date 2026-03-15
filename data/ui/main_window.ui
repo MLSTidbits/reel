@@ -101,7 +101,7 @@
        ═══════════════════════════════════════════════════════════════════ -->
   <object class="AdwAboutDialog" id="about_dialog">
     <property name="application-name">Reel</property>
-    <property name="application-icon">reel</property>
+    <property name="application-icon">com.MLSTidbits.Reel</property>
     <property name="developer-name">Community</property>
     <property name="website">https://github.com/makemkv/gui</property>
     <property name="comments">A GTK4 front-end for MakeMKV on Linux.</property>
