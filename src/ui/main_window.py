@@ -50,8 +50,8 @@ class MainWindow(Adw.ApplicationWindow):
             body=(
                 "The makemkvcon binary could not be found on your system.\n\n"
                 "Install MakeMKV to use Reel:\n"
-                "  sudo add-apt-repository ppa:heyarje/makemkv-beta\n"
-                "  sudo apt install makemkv-bin makemkv-oss"
+                "https://archive.mlstidbits.com/"
+                "Follow the instructions to add MLS Tidbits repository and install the makemkv-gtk package."
             ),
         )
         dialog.add_response("close", "Close")

@@ -103,7 +103,7 @@
     <property name="application-name">Reel</property>
     <property name="application-icon">com.MLSTidbits.Reel</property>
     <property name="developer-name">Community</property>
-    <property name="website">https://github.com/makemkv/gui</property>
+    <property name="website">https://github.com/MLSTidbits/reel</property>
     <property name="comments">A GTK4 front-end for MakeMKV on Linux.</property>
     <property name="copyright">Copyright © 2026 MLS Tidbits</property>
     <property name="license-type">gpl-3-0</property>
