@@ -44,19 +44,23 @@ install: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr o
 	$(INSTALL) -D -m 644 out/libdriveio.so.0  $(DESTDIR)$(LIBDIR)/libdriveio.so.0
 	$(INSTALL) -D -m 644 out/libmakemkv.so.1  $(DESTDIR)$(LIBDIR)/libmakemkv.so.1
 	$(INSTALL) -D -m 644 out/libmmbd.so.0     $(DESTDIR)$(LIBDIR)/libmmbd.so.0
+
 ifeq ($(DESTDIR),)
 	ldconfig
 endif
+
 	$(INSTALL) -D -m 755 out/mmccextr         $(DESTDIR)$(BINDIR)/mmccextr
 	$(INSTALL) -D -m 755 out/mmgplsrv         $(DESTDIR)$(BINDIR)/mmgplsrv
 	$(INSTALL) -D -m 755 out/makemkvcon       $(DESTDIR)$(BINDIR)/makemkvcon
 	$(INSTALL) -D -m 755 src/reel             $(DESTDIR)$(BINDIR)/reel
+
 ifeq ($(GTK_INSTALL),yes)
 	$(INSTALL) -D -m 755 src/core/*.py  $(DESTDIR)$(LIBDIR)/reel/core/
 	$(INSTALL) -D -m 755 src/ui/*.py   $(DESTDIR)$(LIBDIR)/reel/ui/
 	$(INSTALL) -D -m 755 src/main.py  $(DESTDIR)$(LIBDIR)/reel/
 endif
-    $(INSTALL) -D -m 644 data/comMLSTidbits.Reel.desktop $(DESTDIR)$(LAUNCHERDIR)/
+
+	$(INSTALL) -D -m 644 data/comMLSTidbits.Reel.desktop $(DESTDIR)$(LAUNCHERDIR)/
 	$(INSTALL) -D -m 644 data/icons/scalable/comMLSTidbits.Reel.svg $(DESTDIR)$(ICONDIR)/
 
 	$(INSTALL) -D -m 644 data/ui/* $(DESTDIR)$(PREFIX)/share/reel/ui/
