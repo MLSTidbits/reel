@@ -1,10 +1,10 @@
 include makefile.common
 include mmccextr/mmccextr.mak
 
-prefix=/usr
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-bindir=${exec_prefix}/bin
+PREFIX=/usr
+EXEC_PREFIX=${PREFIX}
+LIBDIR=${EXEC_PREFIX}/lib
+BINDIR=${EXEC_PREFIX}/bin
 
 FFMPEG_CFLAGS=-I/usr/include/x86_64-linux-gnu
 FFMPEG_LIBS=-lavcodec -lavutil -lrt
@@ -34,16 +34,6 @@ all: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/m
 
 clean:
 	-rm -rf out tmp
-
-install: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/mmgplsrv out/makemkv.bin.full
-	$(INSTALL) -D -m 644 out/libdriveio.so.0  $(DESTDIR)$(libdir)/libdriveio.so.0
-	$(INSTALL) -D -m 644 out/libmakemkv.so.1  $(DESTDIR)$(libdir)/libmakemkv.so.1
-	$(INSTALL) -D -m 644 out/libmmbd.so.0     $(DESTDIR)$(libdir)/libmmbd.so.0
-ifeq ($(DESTDIR),)
-	ldconfig
-endif
-	$(INSTALL) -D -m 755 out/mmccextr         $(DESTDIR)$(bindir)/mmccextr
-	$(INSTALL) -D -m 755 out/mmgplsrv         $(DESTDIR)$(bindir)/mmgplsrv
 
 # ── Strip step ────────────────────────────────────────────────────────────── #
 
