@@ -1,146 +1,72 @@
-# Reel — MakeMKV GUI for Linux
+<div align="center">
+  <img src="images/logo.svg"
+  alt="Reel - DVD and Blu-ray Ripping Tool"
+  width="auto"
+  height="256px" />
+  <p>
+    Backup and rip your DVD and Blu-ray collection with ease using Reel.
+  </p>
+  <p>  </p>
+  <p>  </p>
+  <p>  </p>
+  <image src="images/demo.gif" alt="Reel in action" width="auto" height="360px" />
+</div>
 
-A full-featured GTK4 + libadwaita front-end for [MakeMKV](https://www.makemkv.com/) on Linux.
-Built with Python 3.11+ and PyGObject, following the GNOME Human Interface Guidelines.
+## ABOUT
 
-Copyright © 2026 MLS Tidbits — GPL-3.0-or-later
+**Reel**  uses the [MakeMKV](https://www.makemkv.com/) command-line interface to rip DVDs and Blu-rays. It provides a simple and intuitive interface for selecting the source, destination, and ripping options. This is possible thanks to the `/usr/bin/makemkvcon` which is included in the with the [Tarball](https://www.makemkv.com/download/makemkv-bin-1.18.3.tar.gz) from MakeMKV.
 
----
+## FEATURES
 
-## Features
+- **Easy to Use**: Reel provides a user-friendly interface for ripping your DVDs and Blu-rays, making it accessible to users of all technical levels.
+- **Automatic Detection**: Automatically detects when a DVD or Blu-ray a is inserted.
+- **Control MakeMKV**: Define both **REEL** and **MakeMKV** preferences to customize your ripping experience.
+- **Logging**: Real-time logging of the ripping process, allowing you to monitor progress and troubleshoot any issues that may arise.
+- **Rename Files**: Allows you to rename the output files, great for organizing your media library.
 
-- **Disc Ripping** — detect drives, browse titles, select what to rip, track progress with title name display
-- **Select / Deselect All** — button toggles between "Select All" and "Deselect All" as titles are checked
-- **Backup** — full disc backup with optional decryption and integrity verification
-- **Log Viewer** — colour-coded, searchable, saveable output from `makemkvcon`
-- **Preferences** — persistent settings written to `~/.MakeMKV/settings.conf` and `~/.config/ripper/settings.json`
-  - Expert Mode toggle reveals the Default Profile selector (Default, AAC-stereo, FLAC, WDTV)
-- Native GNOME look via `libadwaita` — respects dark/light mode and accent colours
-- Missing `makemkvcon` binary detected at launch with an actionable alert dialog
+## INSTALLATION
 
----
+### Debian-based Systems
 
-## Requirements
-
-### Debian / Ubuntu
+On Debian-based systems, you can install Reel using the following commands by going to the [MLS Tidbits repository](https://archive.mlstidbits.com/). Once thee repository is added, you can install Reel with:
 
 ```bash
-sudo apt install \
-  python3 \
-  python3-gi \
-  python3-gi-cairo \
-  gir1.2-gtk-4.0 \
-  gir1.2-adw-1 \
-  makemkv-bin \
-  makemkv-oss
-```
-
-**Note:** `makemkv-bin` and `makemkv-oss` are not in the official repos.
-Install via the MakeMKV PPA:
->
-```bash
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/MLSTidbits.gpg] https://archive.mlstidbits.com/ stable main" | sudo tee /etc/apt/sources.list.d/MLSTidbits.list
-wget -qO - https://archive.mlstidbits.com/key/MLSTidbits.gpg | sudo dd of=/usr/share/keyrings/MLSTidbits.gpg
-
 sudo apt update
-sudo apt install makemkv-bin ripper-gtk
+# For GTK version
+sudo apt install --yes reel-gtk
+# For Qt version
+sudo apt install --yes reel-qt
 ```
 
+### Other Systems
 
-### Fedora
+For other systems, clone the repository and install with:
 
 ```bash
-sudo dnf install python3-gobject gtk4 libadwaita
+git clone https://github.com/MLSTidbits/reel.git
+cd reel
+# For GTK version
+sudo make && sudo make install GTK_INSTALL=enable
+# For Qt version
+sudo make && sudo make install QT_INSTALL=enable
 ```
 
-### Arch Linux
+If both versions are specified, then neither will be installed and an error will be thrown.
 
-```bash
-sudo pacman -S python-gobject gtk4 libadwaita
-```
+## CONCLUSION
 
----
+Reel is a powerful and user-friendly tool for ripping DVDs and Blu-rays using the MakeMKV command-line interface. With its intuitive interface and robust features, Reel makes it easy to backup and organize your media collection. Whether you're a casual user or a media enthusiast, Reel provides a seamless ripping experience.
 
-## Running (development)
+This project came about as a way to have a simple and efficient tool for ripping DVDs and Blu-rays without an application that blends in with the desktop environment. By using the MakeMKV command-line interface, Reel offers a lightweight and customizable solution for users who want to manage their media library with ease.
 
-```bash
-git clone https://github.com/your-org/makemkv-gui
-cd makemkv-gui
-chmod +x run.sh
-./run.sh
-```
+## CONTRIBUTING
 
----
+Contributions are welcome! If you find a bug or have a feature request, please open an issue on the GitHub repository. If you would like to contribute code, please fork the repository and create a pull request.
 
-## Installation
+## LICENSE
 
-Copy Python modules and data files to the expected locations:
+MakeMKV (c) 2008-2025 EULA GuinpinSoft Inc. All rights reserved.
 
-```bash
-# Python modules
-sudo mkdir -p /usr/lib/ripper
-sudo cp -r src/ui   /usr/lib/ripper/ui
-sudo cp -r src/core /usr/lib/ripper/core
+libmakemkv (c) 2008-2025 LGPLv2.1+ EULA GuinpinSoft Inc. All rights reserved.
 
-# UI and data files
-sudo mkdir -p /usr/share/ripper/ui
-sudo cp data/ui/*.ui /usr/share/ripper/ui/
-sudo mkdir -p /usr/share/doc/ripper
-sudo cp doc/version  /usr/share/doc/ripper/version
-sudo cp README.md    /usr/share/doc/ripper/
-
-# Launcher script
-sudo cp src/main.py /usr/bin/ripper
-sudo chmod +x /usr/bin/ripper
-
-# Desktop entry
-sudo cp data/makemkv-gui.desktop /usr/share/applications/
-sudo update-desktop-database /usr/share/applications/
-```
-
-## Architecture
-
-```text
-┌─────────────────────────────────────────┐
-│          Adw.ApplicationWindow          │
-│  ┌──────────────┐  ┌───────────────────┐│
-│  │ Sidebar nav  │  │  Content stack    ││
-│  │              │  │  ┌─────────────┐  ││
-│  │ • Rip Disc   │  │  │  DiscView   │  ││
-│  │ • Backup     │  │  │  BackupView │  ││
-│  │ • Logs       │  │  │  LogView    │  ││
-│  └──────────────┘  │  └─────────────┘  ││
-│                    └───────────────────┘│
-└─────────────────────────────────────────┘
-              │ GObject signals
-              ▼
-   MakeMKVController  (GObject)
-              │ subprocess + threads
-              ▼
-     makemkvcon  (system binary)
-```
-
-- All subprocess calls run on daemon threads
-- Results marshalled back to the GTK main thread via `GLib.idle_add()`
-- All static UI structure (labels, icons, layout) lives in `.ui` XML files
-- Python handles only dynamic behaviour: signals, state, subprocess management
-- `GtkBuilder` XML loaded at runtime — all app strings editable without touching Python
-
----
-
-## UI File Conventions
-
-All view classes load their layout from a corresponding `.ui` file via `Gtk.Builder`.
-Static text (labels, tooltips, page titles, menu items) lives exclusively in the XML.
-Python only wires signals and updates dynamic content (drive names, progress, log lines).
-
-The window title, default size, about dialog strings, and copyright notice are all
-set in `data/ui/main_window.ui` — no hardcoded strings in Python.
-
----
-
-## License
-
-GPL-3.0-or-later — see `LICENSE`.
-MakeMKV is © 2007–2024 GuinpinSoft inc. This project is an independent front-end
-and is not affiliated with or endorsed by GuinpinSoft inc.
+Reel (c) 2026 GPLv3+ MLS Tidbits. All rights reserved.
