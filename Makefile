@@ -54,6 +54,7 @@ endif
 ifeq ($(GTK_INSTALL),yes)
 	$(INSTALL) -D -m 755 src/core/*.py  $(DESTDIR)$(LIBDIR)/reel/core/
 	$(INSTALL) -D -m 755 src/ui/*.py   $(DESTDIR)$(LIBDIR)/reel/ui/
+	$(INSTALL) -D -m 755 src/main.py  $(DESTDIR)$(LIBDIR)/reel/
 endif
     $(INSTALL) -D -m 644 data/comMLSTidbits.Reel.desktop $(DESTDIR)$(LAUNCHERDIR)/
 	$(INSTALL) -D -m 644 data/icons/scalable/comMLSTidbits.Reel.svg $(DESTDIR)$(ICONDIR)/
