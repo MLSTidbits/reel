@@ -12,6 +12,31 @@ License: EULA
  MakeMKV is a proprietary software and is licensed under the terms of the
  End User License Agreement (EULA) provided by GuinpinSoft Inc.
 
+Files:
+ usr/bin/mmccextr
+ usr/bin/mmgplsrv
+ usr/lib/libriveio.so.0
+ usr/lib/libmakemkv.so.1
+ usr/lib/libmmbd.so.0
+Copyright:
+ 2008-2025 MLS Tidbits <contact@mlstidbits.com>
+License: LGPL-3+
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <https://www.gnu.org/licenses/>
+Comment:
+ On Debian systems, the complete text of the LGNU General Public License
+ version 3 can be found in "/usr/share/common-licenses/LGPL-3".
+
 # If you want to use GPL v2 or later for the /debian/* files use
 # the following clauses, or change it to suit. Delete these two lines
 Files:
