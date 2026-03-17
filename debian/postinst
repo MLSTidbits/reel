@@ -3,17 +3,19 @@
 set -e
 
 EULA_URL="https://raw.githubusercontent.com/MLSTidbits/reel/refs/heads/main/src/makemkv/eula.license"
-TMP_EULA="$(mktemp /tmp/makemkv-eula.XXXXXX)"
+TMP_EULA="/tmp/makemkv_eula.license"
+
+curl -sSL "$EULA_URL" -o "$TMP_EULA"
 
 case "$1" in
     configure|upgrade                            )
         if [ "$1" = "configure" ]; then
-            if [ -f /usr/share/doc/makemkv-bin/eula.license ]; then
+            if [ -f /usr/share/doc/makemkv-bin/eula.license ] ; then
                 echo "EULA already accepted, skipping"
             else
-                if command -v curl >/dev/null 2>&1; then
+                if command -v curl >/dev/null 2>&1 ; then
                     curl -sSL "$EULA_URL" -o "$TMP_EULA"
-                elif command -v wget >/dev/null 2>&1; then
+                elif command -v wget >/dev/null 2>&1 ; then
                     wget -qO "$TMP_EULA" "$EULA_URL"
                 else
                     echo "ERROR: neither curl nor wget is available." >&2
@@ -23,11 +25,7 @@ case "$1" in
                 whiptail --title "MakeMKV EULA" --textbox --scrolltext "$TMP_EULA" 20 80
                 rm -f "$TMP_EULA"
 
-                if (whiptail --title "MakeMKV EULA" --yesno "Do you accept the MakeMKV EULA?" 10 60) then
-                    mkdir -p /usr/share/doc/makemkv-bin
-                    echo "EULA accepted, saving acceptance record"
-                    cp "$TMP_EULA" /usr/share/doc/makemkv-bin/eula.license
-                else
+                if ! whiptail --title "MakeMKV EULA" --yesno "Do you accept the MakeMKV EULA?" 10 60 ; then
                     echo "EULA not accepted, aborting installation"
                     exit 1
                 fi
