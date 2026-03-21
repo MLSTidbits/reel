@@ -282,6 +282,8 @@ class DiscView(QWidget):
         self._rip_title_label.setVisible(False)
         self._status_label.setText(
             "✓ Rip complete." if success else "✗ Rip failed.")
+        if success and _load_gui().get("eject_after_rip", False):
+            self.controller.eject_disc()
 
     @pyqtSlot(str)
     def _on_libre_drive(self, message: str):

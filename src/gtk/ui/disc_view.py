@@ -385,6 +385,8 @@ class DiscView(Gtk.Box):
         self._status_label.set_text(
             "✓ Rip complete." if success else "✗ Rip failed."
         )
+        if success and _load_gui().get("eject_after_rip", False):
+            self.controller.eject_disc()
 
     def _set_ripping(self, ripping: bool):
         """Toggle the footer button between Start Ripping and Cancel Ripping."""
