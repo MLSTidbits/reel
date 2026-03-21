@@ -14,6 +14,7 @@ from PyQt5.QtGui import QIcon, QColor
 
 from core.makemkv_controller import MakeMKVController
 from core.models import DriveInfo, TitleInfo
+from ui.settings_dialog import _load_gui
 
 
 class DiscView(QWidget):
@@ -151,6 +152,11 @@ class DiscView(QWidget):
     #  Slots                                                               #
     # ------------------------------------------------------------------ #
 
+    @staticmethod
+    def _auto_rip_enabled() -> bool:
+        """Return True if auto-rip is enabled in GUI settings."""
+        return _load_gui().get("auto_rip", False)
+
     @pyqtSlot(list)
     def _on_drives_updated(self, drives: list):
         self._libre_label.setVisible(False)
@@ -165,6 +171,12 @@ class DiscView(QWidget):
                 item = QListWidgetItem(text)
                 item.setData(Qt.UserRole, drive)
                 self._drives_list.addItem(item)
+            # Auto-rip: load the first drive with a disc
+            if self._auto_rip_enabled() and not self._ripping:
+                first = drives[0]
+                self._disc_info_label.setText(
+                    f"Auto-rip: loading disc {first.drive_index}…")
+                self.controller.load_disc(first.drive_index)
         else:
             self._drives_list.addItem("No optical drives detected")
 
@@ -197,6 +209,10 @@ class DiscView(QWidget):
         self._titles_tree.itemChanged.connect(self._on_title_item_changed)
         self._rip_btn.setEnabled(bool(titles))
         self._refresh_select_all_btn()
+
+        # Auto-rip: start ripping immediately once titles are loaded
+        if titles and self._auto_rip_enabled() and not self._ripping:
+            self._on_rip_clicked()
 
     @pyqtSlot(QTreeWidgetItem, int)
     def _on_title_item_changed(self, item: QTreeWidgetItem, col: int):

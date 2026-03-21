@@ -13,6 +13,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, GLib
 from core.makemkv_controller import MakeMKVController
 from core.models import DriveInfo, TitleInfo
+from ui.settings_dialog import _load_gui
 
 _UI_FILE = "/usr/share/reel/ui/disc_view.ui"
 
@@ -274,6 +275,11 @@ class DiscView(Gtk.Box):
         self._libre_label.set_label(message)
         self._libre_label.set_visible(True)
 
+    @staticmethod
+    def _auto_rip_enabled() -> bool:
+        """Return True if auto-rip is enabled in GUI settings."""
+        return _load_gui().get("auto_rip", False)
+
     def _on_drives_updated(self, _ctrl, drives: list):
         self._libre_label.set_visible(False)
         self._libre_label.set_label("")
@@ -281,6 +287,13 @@ class DiscView(Gtk.Box):
         if drives:
             for drive in drives:
                 self._drives_list.append(DriveRow(drive))
+            # Auto-rip: load the first drive that has a disc
+            if self._auto_rip_enabled() and not self._ripping:
+                first = drives[0]
+                self._disc_info_bar.set_title(
+                    f"Auto-rip: loading disc {first.drive_index}…"
+                )
+                self.controller.load_disc(first.drive_index)
         else:
             self._drives_list.append(
                 Adw.ActionRow(title="No optical drives detected")
@@ -305,6 +318,10 @@ class DiscView(Gtk.Box):
             self._titles_list.append(TitleRow(title))
         self._rip_btn.set_sensitive(bool(titles))
         self._refresh_select_all_btn()
+
+        # Auto-rip: start ripping immediately once titles are loaded
+        if titles and self._auto_rip_enabled() and not self._ripping:
+            self._on_rip_clicked(None)
 
     def _all_selected(self) -> bool:
         row = self._titles_list.get_first_child()
