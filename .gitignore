@@ -31,3 +31,5 @@ debian/files
 __pycache__/
 
 build-stamp
+
+_build/
