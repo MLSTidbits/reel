@@ -334,7 +334,7 @@ class MakeMKVController(GObject.Object):
             return
 
         import json, os
-        config_path = os.path.expanduser("~/.config/makemkv-gui/settings.json")
+        config_path = os.path.expanduser("~/.config/reel/settings.json")
         dest = os.path.expanduser("~/Videos/Rips")
         try:
             with open(config_path) as f:
