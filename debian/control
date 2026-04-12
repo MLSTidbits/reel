@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: MLS Tidbits <contact@mlstidbits.com>
 Build-Depends:
  debhelper-compat (= 13), autotools-dev, libexpat1-dev, libavcodec-dev, zlib1g-dev,
- libavcodec-dev, boa, pandoc, dh-make, git
+ pandoc, dh-make, git
 Standards-Version: 4.6.0
 Homepage: https://mlstidbits.com
 Vcs-Browser: https://github.com/MLSTidbits/rippr
@@ -18,14 +18,6 @@ Description: DVD and Blu-ray ripping tool.
  Reel is a DVD and Blu-ray ripping tool that provides a user-friendly interface for
  managing the ripping process. It uses makemkvcon to perform the actual ripping tasks,
  and provides features such as progress tracking and error handling.
-
-Package: reel-common
-Architecture: all
-Depends: reel
-Description: Common files for reel.
- This package contains common files for the reel application, such as application icons
- and desktop files and documentation. These files are shared between the reel, reel-gtk,
- and reel-qt packages.
 
 Package: reel-gtk
 Architecture: amd64
