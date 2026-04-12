@@ -7,7 +7,6 @@ build/
 *.deb
 dist/
 changelog
-version
 md5sums
 
 src/makemkv/tmp/
