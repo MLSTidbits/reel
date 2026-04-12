@@ -34,7 +34,7 @@ export CFLAGS CXXFLAGS LDFLAGS DESTDIR INSTALL OBJCOPY LD
 all: _build
 
 clean:
-	@rm -rvf out
+	@rm -rvf _build
 
 install: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/mmgplsrv out/makemkvcon
 	$(INSTALL) -D -m 644 out/libdriveio.so.0  $(DESTDIR)$(LIBDIR)/libdriveio.so.0
