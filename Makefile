@@ -1,42 +1,18 @@
 SOURCE = REEL
 VERSION = $(shell cat doc/version)
-
-GCC=gcc
-GXX=g++ -std=c++11
-
-export GCC GXX
-
-CFLAGS=-g -O2 -D_linux_ -Wno-deprecated-declarations
-CXXFLAGS=-g -O2
-LDFLAGS=
-DESTDIR=
-
-PREFIX=/usr
-EXEC_PREFIX=${PREFIX}
-LIBDIR=${EXEC_PREFIX}/lib
-BINDIR=${EXEC_PREFIX}/bin
-LAUNCHERDIR=${EXEC_PREFIX}/share/applications
-ICONDIR=${EXEC_PREFIX}/share/icons/hicolor/scalable/apps
-
-export CFLAGS CXXFLAGS LDFLAGS DESTDIR PREFIX EXEC_PREFIX LIBDIR BINDIR
-
 INSTALL=/usr/bin/install -c
-OBJCOPY=objcopy
-LD=/usr/bin/ld -m elf_x86_64
 
 GTK_INSTALL =
 QT_INSTALL =
 
-export CFLAGS CXXFLAGS LDFLAGS DESTDIR INSTALL OBJCOPY LD
-
-.PHONY: all clean install rebuild _build
+.PHONY: all clean install rebuild _build _build/doc _build/data _build/ui _build/src
 
 all: _build
 
 clean:
 	@rm -rvf _build
 
-install: out/libdriveio.so.0 out/libmakemkv.so.1 out/libmmbd.so.0 out/mmccextr out/mmgplsrv out/makemkvcon
+install:
 	$(INSTALL) -D -m 644 out/libdriveio.so.0  $(DESTDIR)$(LIBDIR)/libdriveio.so.0
 	$(INSTALL) -D -m 644 out/libmakemkv.so.1  $(DESTDIR)$(LIBDIR)/libmakemkv.so.1
 	$(INSTALL) -D -m 644 out/libmmbd.so.0     $(DESTDIR)$(LIBDIR)/libmmbd.so.0
@@ -61,19 +37,40 @@ endif
 
 	$(INSTALL) -D -m 644 data/ui/* $(DESTDIR)$(PREFIX)/share/reel/ui/
 
-_build:
+_build: _build/doc _build/data _build/ui _build/src
+
+_build/doc:
+	@mkdir -p _build/doc
+	@for f in doc/version doc/copyright CODE_OF_CONDUCT.md COPYING README.md CONTRIBUTING.md; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mCP \e[0m $$f"; \
+			cp "$$f" _build/doc/; \
+		fi; \
+	done
+
+_build/data:
+	@mkdir -p _build/data
+	@for f in data/com.MLSTidbits.Reel.desktop data/icons/scalable/com.MLSTidbits.Reel.svg; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mCP \e[0m $$f"; \
+			cp "$$f" _build/data/; \
+		fi; \
+	done
+
+_build/ui:
+	@mkdir -p _build/ui
+	@for f in data/ui/*; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mCP \e[0m $$f"; \
+			cp "$$f" _build/ui/; \
+		fi; \
+	done
+
+_build/src:
 	@mkdir -p _build
-	@echo "Building REEL $(VERSION) in _build/"
-	@cp -r src/* _build/
-
-# Copy documentation files to the build directory
-	@echo "Copying documentation files to _build/doc/"
-	@cp -r doc _build/
-	@cp CODE_OF_CONDUCT.md _build/doc/
-	@cp COPYING _build/doc/
-	@cp README.md _build/doc/
-	@cp CONTRIBUTING.md _build/doc/
-
-# Copy data files to the build directory
-	@echo "Copying data files to _build/data/"
-	@cp -r data _build/
+	@for f in src/gtk/main.py src/gtk src/qt src/reel; do \
+		if [ -f "$$f" ] || [ -d "$$f" ]; then \
+			echo "\e[32mCP \e[0m $$f"; \
+			cp -fr "$$f" _build/; \
+		fi; \
+	done
