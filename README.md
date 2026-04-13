@@ -65,8 +65,4 @@ Contributions are welcome! If you find a bug or have a feature request, please o
 
 ## LICENSE
 
-MakeMKV (c) 2008-2025 EULA GuinpinSoft Inc. All rights reserved.
-
-libmakemkv (c) 2008-2025 LGPLv2.1+ EULA GuinpinSoft Inc. All rights reserved.
-
 Reel (c) 2026 GPLv3+ MLS Tidbits. All rights reserved.
