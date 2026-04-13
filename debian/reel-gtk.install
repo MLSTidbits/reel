@@ -1,4 +1,4 @@
-data/ui                 usr/share/reel/
+_build/ui                 usr/share/reel/
 
 _build/gtk/main.py      usr/lib/reel/
 _build/gtk/core/*.py    usr/lib/reel/core/
