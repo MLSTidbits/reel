@@ -2,40 +2,19 @@ SOURCE = REEL
 VERSION = $(shell cat doc/version)
 INSTALL=/usr/bin/install -c
 
+ROOT = /usr
+BIN_DIR = $(ROOT)/bin
+LIB_DIR = $(ROOT)/lib/reel
+LAUNCHER_DIR = $(ROOT)/share/applications
+ICON_DIR = $(ROOT)/share/icons/hicolor/scalable/apps
+PREFIX = $(ROOT)/share/reel
+
+BUILD_DIR = _build
+
 GTK_INSTALL =
 QT_INSTALL =
 
-.PHONY: all clean install rebuild _build _build/doc _build/data _build/ui _build/src
-
-all: _build
-
-clean:
-	@rm -rvf _build
-
-install:
-	$(INSTALL) -D -m 644 out/libdriveio.so.0  $(DESTDIR)$(LIBDIR)/libdriveio.so.0
-	$(INSTALL) -D -m 644 out/libmakemkv.so.1  $(DESTDIR)$(LIBDIR)/libmakemkv.so.1
-	$(INSTALL) -D -m 644 out/libmmbd.so.0     $(DESTDIR)$(LIBDIR)/libmmbd.so.0
-
-ifeq ($(DESTDIR),)
-	ldconfig
-endif
-
-	$(INSTALL) -D -m 755 out/mmccextr         $(DESTDIR)$(BINDIR)/mmccextr
-	$(INSTALL) -D -m 755 out/mmgplsrv         $(DESTDIR)$(BINDIR)/mmgplsrv
-	$(INSTALL) -D -m 755 out/makemkvcon       $(DESTDIR)$(BINDIR)/makemkvcon
-	$(INSTALL) -D -m 755 src/reel             $(DESTDIR)$(BINDIR)/reel
-
-ifeq ($(GTK_INSTALL),yes)
-	$(INSTALL) -D -m 755 src/core/*.py  $(DESTDIR)$(LIBDIR)/reel/core/
-	$(INSTALL) -D -m 755 src/ui/*.py   $(DESTDIR)$(LIBDIR)/reel/ui/
-	$(INSTALL) -D -m 755 src/main.py  $(DESTDIR)$(LIBDIR)/reel/
-endif
-
-	$(INSTALL) -D -m 644 data/comMLSTidbits.Reel.desktop $(DESTDIR)$(LAUNCHERDIR)/
-	$(INSTALL) -D -m 644 data/icons/scalable/comMLSTidbits.Reel.svg $(DESTDIR)$(ICONDIR)/
-
-	$(INSTALL) -D -m 644 data/ui/* $(DESTDIR)$(PREFIX)/share/reel/ui/
+.PHONY: _build _build/doc _build/data _build/ui _build/src
 
 _build: _build/doc _build/data _build/ui _build/src
 
@@ -72,5 +51,56 @@ _build/src:
 		if [ -f "$$f" ] || [ -d "$$f" ]; then \
 			echo "\e[32mCP \e[0m $$f"; \
 			cp -fr "$$f" _build/; \
+		fi; \
+	done
+
+all: _build
+
+clean:
+	@rm -rvf _build
+
+install:
+
+	@if test -f "_build" ; then \
+		echo "Please run 'make all' first to build the project before installing."exit 1; \
+	fi
+
+	@echo "\e[32mIN \e[0m /usr/bin/reel"
+	@$(INSTALL) -D -m 755 src/reel             $(DESTDIR)$(BINDIR)/reel
+
+ifeq ($(QT_INSTALL),yes)
+	@for f in src/qt/*; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mIN \e[0m $$f"; \
+			$(INSTALL) -D -m 755 "$$f" $(DESTDIR)$(LIB_DIR)/reel/qt/; \
+		fi; \
+	done
+ifeq ($(GTK_INSTALL),yes)
+	@for f in src/gtk/*; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mIN \e[0m $$f"; \
+			$(INSTALL) -D -m 755 "$$f" $(DESTDIR)$(LIB_DIR)/reel/gtk/; \
+		fi; \
+	done
+endif
+
+	@for f in data/ui/*; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mIN \e[0m $$f"; \
+			$(INSTALL) -D -m 644 "$$f" $(DESTDIR)$(PREFIX)/ui/; \
+		fi; \
+	done
+
+	@for f in data/icons/scalable/com.MLSTidbits.Reel.svg; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mIN \e[0m $$f"; \
+			$(INSTALL) -D -m 644 "$$f" $(DESTDIR)$(ICON_DIR)/; \
+		fi; \
+	done
+
+	@for f in data/com.MLSTidbits.Reel.desktop; do \
+		if [ -f "$$f" ]; then \
+			echo "\e[32mIN \e[0m $$f"; \
+			$(INSTALL) -D -m 644 "$$f" $(DESTDIR)$(LAUNCHER_DIR)/; \
 		fi; \
 	done
