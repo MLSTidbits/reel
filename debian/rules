@@ -29,7 +29,8 @@ clean:
 		debian/*.substvars \
 		debian/*.debhelper \
 		debian/.debhelper \
-		debian/files
+		debian/files \
+		debian/source
 
 install:
 	dh_prep
