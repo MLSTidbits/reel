@@ -75,6 +75,8 @@ ifeq ($(QT_INSTALL),yes)
 			$(INSTALL) -D -m 755 "$$f" $(DESTDIR)$(LIB_DIR)/reel/qt/; \
 		fi; \
 	done
+endif
+
 ifeq ($(GTK_INSTALL),yes)
 	@for f in src/gtk/*; do \
 		if [ -f "$$f" ]; then \
