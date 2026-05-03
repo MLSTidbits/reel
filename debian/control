@@ -13,7 +13,7 @@ Rules-Requires-Root: no
 
 Package: reel
 Architecture: amd64
-Depends: libmakemkv , makemkvcon
+Depends: makemkvcon
 Description: DVD and Blu-ray ripping tool.
  Reel is a DVD and Blu-ray ripping tool that provides a user-friendly interface for
  managing the ripping process. It uses makemkvcon to perform the actual ripping tasks,
