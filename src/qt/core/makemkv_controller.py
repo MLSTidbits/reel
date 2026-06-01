@@ -43,7 +43,10 @@ class MakeMKVController(QObject):
     log_line        = pyqtSignal(str, str)
     error           = pyqtSignal(str)
     binary_missing  = pyqtSignal()
-    libre_drive     = pyqtSignal(str)
+    libre_drive      = pyqtSignal(str)
+    firmware_started  = pyqtSignal(str)
+    firmware_progress = pyqtSignal(float, str)
+    firmware_finished = pyqtSignal(object)
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -60,6 +63,7 @@ class MakeMKVController(QObject):
         self._active_drive_index: int = 0
         self._scanning: bool = False
         self._loading: bool = False
+        self._flashing: bool = False
 
     # ------------------------------------------------------------------ #
     #  Thread-safe emit helper                                             #
@@ -442,6 +446,64 @@ class MakeMKVController(QObject):
     # ------------------------------------------------------------------ #
     #  Helpers                                                             #
     # ------------------------------------------------------------------ #
+
+    # ------------------------------------------------------------------ #
+    #  Firmware                                                            #
+    # ------------------------------------------------------------------ #
+
+    def dump_firmware(self, drive_index: int, output_path: str):
+        """Dump drive firmware to output_path. Non-blocking."""
+        if self._scanning or self._loading or self._flashing:
+            return
+        threading.Thread(
+            target=self._firmware_thread,
+            args=(drive_index, "dump", output_path),
+            daemon=True,
+        ).start()
+
+    def flash_firmware(self, drive_index: int, bin_path: str):
+        """Flash a firmware .bin to the drive. Non-blocking."""
+        if self._scanning or self._loading or self._flashing:
+            return
+        threading.Thread(
+            target=self._firmware_thread,
+            args=(drive_index, "flash", bin_path),
+            daemon=True,
+        ).start()
+
+    def _firmware_thread(self, drive_index: int, operation: str, bin_path: str):
+        from core.models import FirmwareJob
+        self._flashing = True
+        label = "Dumping firmware" if operation == "dump" else "Flashing firmware"
+        self._log("INFO", f"{label} on disc:{drive_index} — {bin_path}")
+        self._queue(lambda: self.firmware_started.emit(label))
+        job = FirmwareJob(drive_index=drive_index, operation=operation, bin_path=bin_path)
+        try:
+            # NOTE: verify exact makemkvcon firmware subcommand before use.
+            cmd = [self._binary, "-r", "f", f"disc:{drive_index}", bin_path]
+            self._active_proc = subprocess.Popen(
+                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+            )
+            proc = self._active_proc
+            for line in proc.stdout:
+                line = line.rstrip()
+                level, text = self._parser.classify_line(line)
+                _l, _t = level, text
+                self._queue(lambda l=_l, t=_t: self.log_line.emit(l, t))
+                fraction, status = self._parser.parse_progress(line)
+                if fraction is not None:
+                    _f, _s = fraction, status
+                    self._queue(lambda f=_f, s=_s: self.firmware_progress.emit(f, s))
+            proc.wait()
+            job.status = "done" if proc.returncode == 0 else "failed"
+            self._active_proc = None
+        except Exception as e:
+            job.status = "failed"
+            job.error_message = str(e)
+            self._queue(lambda: self.error.emit(str(e)))
+        self._flashing = False
+        _j = job
+        self._queue(lambda j=_j: self.firmware_finished.emit(j))
 
     def _log(self, level: str, text: str):
         _l, _t = level, text

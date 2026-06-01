@@ -74,3 +74,14 @@ class RipJob:
     current_title: int = 0
     timestamp: str = field(default_factory=lambda: datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
     error_message: Optional[str] = None
+
+
+@dataclass
+class FirmwareJob:
+    """Tracks a single firmware dump or flash operation."""
+    drive_index: int
+    operation: str          # "dump" | "flash"
+    bin_path: str
+    status: str = "running" # running | done | failed
+    timestamp: str = field(default_factory=lambda: datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    error_message: Optional[str] = None

@@ -19,6 +19,10 @@
     </section>
     <section>
       <item>
+        <attribute name="label">Firmware…</attribute>
+        <attribute name="action">win.firmware</attribute>
+      </item>
+      <item>
         <attribute name="label">Preferences</attribute>
         <attribute name="action">win.settings</attribute>
       </item>

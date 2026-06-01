@@ -13,6 +13,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gio
 from ui.disc_view import DiscView
 from ui.backup_view import BackupView
+from ui.firmware_view import FirmwareView
 from ui.log_view import LogView
 from ui.settings_dialog import SettingsDialog, GUI_CONFIG_PATH, _load_gui, _save_gui
 from core.version import get_version
@@ -160,6 +161,7 @@ class MainWindow(Adw.ApplicationWindow):
         for name, cb in [
             ("settings",       self._on_settings),
             ("about",          self._on_about),
+            ("firmware",       self._on_firmware),
             ("refresh-drives", self._on_refresh_drives),
             ("eject-disc",     self._on_eject_disc),
         ]:
@@ -171,6 +173,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.disc_view   = DiscView(controller=self.controller)
         self.backup_view = BackupView(controller=self.controller)
         self.log_view    = LogView(controller=self.controller)
+        self._firmware_win = None  # created lazily in _on_firmware()
 
         # Wire log header buttons to LogView methods
         self._save_log_btn.connect("clicked",  self.log_view._on_save_log)
@@ -184,8 +187,8 @@ class MainWindow(Adw.ApplicationWindow):
         # (name, view widget, icon-name, label, header-actions-key)
         self._views = [
             ("rip",    self.disc_view,   "media-optical-dvd",       "Rip Disc", "rip"),
-            ("backup", self.backup_view, "drive-harddisk-symbolic",  "Backup",  "backup"),
-            ("logs",   self.log_view,    "text-x-script-symbolic",   "Logs",    "logs"),
+            ("backup", self.backup_view, "drive-harddisk-symbolic",  "Backup",   "backup"),
+            ("logs",   self.log_view,    "text-x-script-symbolic",   "Logs",     "logs"),
         ]
 
         for _name, widget, icon_name, label, _key in self._views:
@@ -235,6 +238,20 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _on_settings(self, action, param):
         SettingsDialog().present(self)
+
+    def _on_firmware(self, action, param):
+        if self._firmware_win is None:
+            fw = FirmwareView(controller=self.controller)
+            toolbar = Adw.ToolbarView()
+            toolbar.add_top_bar(Adw.HeaderBar())
+            toolbar.set_content(fw)
+            win = Adw.Window()
+            win.set_title("Firmware")
+            win.set_default_size(700, 580)
+            win.set_transient_for(self)
+            win.set_content(toolbar)
+            self._firmware_win = win
+        self._firmware_win.present()
 
     @staticmethod
     def _centre_about_labels(dialog):

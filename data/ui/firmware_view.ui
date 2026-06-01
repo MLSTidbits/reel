@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+
+  <!-- Drive selection and LibreDrive status -->
+  <object class="AdwPreferencesGroup" id="drive_group">
+    <property name="title">Drive</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <child>
+      <object class="AdwComboRow" id="drive_row">
+        <property name="title">Optical Drive</property>
+        <property name="subtitle">Select the drive to operate on</property>
+      </object>
+    </child>
+    <child>
+      <object class="AdwActionRow" id="status_row">
+        <property name="title">LibreDrive Status</property>
+        <property name="subtitle">Insert a disc and load it to detect status</property>
+      </object>
+    </child>
+  </object>
+
+  <!-- Firmware .bin file selection -->
+  <object class="AdwPreferencesGroup" id="file_group">
+    <property name="title">Firmware File</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <child>
+      <object class="AdwActionRow" id="file_row">
+        <property name="title">Firmware .bin Path</property>
+        <property name="subtitle">No file selected</property>
+        <property name="activatable">true</property>
+        <child type="prefix">
+          <object class="GtkImage">
+            <property name="icon-name">document-open-symbolic</property>
+          </object>
+        </child>
+        <child type="suffix">
+          <object class="GtkButton" id="file_browse_btn">
+            <property name="icon-name">folder-open-symbolic</property>
+            <property name="valign">center</property>
+            <property name="tooltip-text">Browse for firmware file</property>
+            <style><class name="flat"/></style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- Progress group (hidden until an operation starts) -->
+  <object class="AdwPreferencesGroup" id="progress_group">
+    <property name="title">Progress</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <property name="visible">false</property>
+  </object>
+
+  <!-- Operation history -->
+  <object class="AdwPreferencesGroup" id="history_group">
+    <property name="title">Operation History</property>
+    <property name="margin-start">18</property>
+    <property name="margin-end">18</property>
+    <child>
+      <object class="GtkListBox" id="history_list">
+        <style><class name="boxed-list"/></style>
+        <child>
+          <object class="GtkLabel" id="empty_label">
+            <property name="label">No operations yet</property>
+            <property name="margin-top">12</property>
+            <property name="margin-bottom">12</property>
+            <property name="halign">center</property>
+            <style><class name="dim-label"/></style>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+
+  <!-- Dump button (non-destructive) -->
+  <object class="GtkButton" id="dump_btn">
+    <property name="label">Dump Firmware</property>
+    <property name="sensitive">false</property>
+    <property name="tooltip-text">Save current drive firmware to a .bin file</property>
+    <style>
+      <class name="pill"/>
+    </style>
+  </object>
+
+  <!-- Flash button (hardware-modifying — destructive style) -->
+  <object class="GtkButton" id="flash_btn">
+    <property name="label">Flash Firmware</property>
+    <property name="sensitive">false</property>
+    <property name="tooltip-text">Write a patched firmware .bin to the drive to enable LibreDrive</property>
+    <style>
+      <class name="destructive-action"/>
+      <class name="pill"/>
+    </style>
+  </object>
+
+</interface>

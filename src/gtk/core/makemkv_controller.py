@@ -45,8 +45,11 @@ class MakeMKVController(GObject.Object):
         "backup-finished":  (GObject.SignalFlags.RUN_FIRST, None, (object,)),
         "log-line":         (GObject.SignalFlags.RUN_FIRST, None, (str, str)),
         "error":            (GObject.SignalFlags.RUN_FIRST, None, (str,)),
-        "binary-missing":   (GObject.SignalFlags.RUN_FIRST, None, ()),
-        "libre-drive":      (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "binary-missing":    (GObject.SignalFlags.RUN_FIRST, None, ()),
+        "libre-drive":       (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "firmware-started":  (GObject.SignalFlags.RUN_FIRST, None, (str,)),
+        "firmware-progress": (GObject.SignalFlags.RUN_FIRST, None, (float, str)),
+        "firmware-finished": (GObject.SignalFlags.RUN_FIRST, None, (object,)),
     }
 
     def __init__(self):
@@ -66,6 +69,7 @@ class MakeMKVController(GObject.Object):
         self._op_lock = threading.Lock()
         self._scanning: bool = False
         self._loading: bool = False
+        self._flashing: bool = False
         self._setup_volume_monitor()
 
     def _setup_volume_monitor(self):
@@ -478,6 +482,62 @@ class MakeMKVController(GObject.Object):
 
         job.status = "done" if success else "failed"
         GLib.idle_add(self.emit, "backup-finished", job)
+
+    # ------------------------------------------------------------------ #
+    #  Firmware                                                            #
+    # ------------------------------------------------------------------ #
+
+    def dump_firmware(self, drive_index: int, output_path: str):
+        """Dump drive firmware to output_path. Non-blocking."""
+        if self._scanning or self._loading or self._flashing:
+            return
+        threading.Thread(
+            target=self._firmware_thread,
+            args=(drive_index, "dump", output_path),
+            daemon=True,
+        ).start()
+
+    def flash_firmware(self, drive_index: int, bin_path: str):
+        """Flash a firmware .bin to the drive. Non-blocking."""
+        if self._scanning or self._loading or self._flashing:
+            return
+        threading.Thread(
+            target=self._firmware_thread,
+            args=(drive_index, "flash", bin_path),
+            daemon=True,
+        ).start()
+
+    def _firmware_thread(self, drive_index: int, operation: str, bin_path: str):
+        from core.models import FirmwareJob
+        self._flashing = True
+        label = "Dumping firmware" if operation == "dump" else "Flashing firmware"
+        self._emit_log("INFO", f"{label} on disc:{drive_index} — {bin_path}")
+        GLib.idle_add(self.emit, "firmware-started", label)
+        job = FirmwareJob(drive_index=drive_index, operation=operation, bin_path=bin_path)
+        try:
+            # NOTE: verify exact makemkvcon firmware subcommand before use;
+            # 'f' is the expected verb but may differ by MakeMKV version.
+            cmd = [self._binary, "-r", "f", f"disc:{drive_index}", bin_path]
+            self._active_proc = subprocess.Popen(
+                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+            )
+            proc = self._active_proc
+            for line in proc.stdout:
+                line = line.rstrip()
+                level, text = self._parser.classify_line(line)
+                GLib.idle_add(self.emit, "log-line", level, text)
+                fraction, status = self._parser.parse_progress(line)
+                if fraction is not None:
+                    GLib.idle_add(self.emit, "firmware-progress", fraction, status)
+            proc.wait()
+            job.status = "done" if proc.returncode == 0 else "failed"
+            self._active_proc = None
+        except Exception as e:
+            job.status = "failed"
+            job.error_message = str(e)
+            GLib.idle_add(self.emit, "error", str(e))
+        self._flashing = False
+        GLib.idle_add(self.emit, "firmware-finished", job)
 
     # ------------------------------------------------------------------ #
     #  Helpers                                                             #

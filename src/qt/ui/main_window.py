@@ -16,6 +16,7 @@ from core.makemkv_controller import MakeMKVController
 from core.version import get_version
 from ui.disc_view import DiscView
 from ui.backup_view import BackupView
+from ui.firmware_view import FirmwareView
 from ui.log_view import LogView
 from ui.settings_dialog import SettingsDialog, _load_gui, _save_gui
 
@@ -70,10 +71,11 @@ class MainWindow(QMainWindow):
         self.disc_view   = DiscView(self.controller)
         self.backup_view = BackupView(self.controller)
         self.log_view    = LogView(self.controller)
+        self._firmware_dlg = None  # created lazily in _on_firmware()
 
-        self._tabs.addTab(self.disc_view,   QIcon.fromTheme("media-optical-dvd"),  "Rip Disc")
-        self._tabs.addTab(self.backup_view, QIcon.fromTheme("drive-harddisk"),      "Backup")
-        self._tabs.addTab(self.log_view,    QIcon.fromTheme("text-x-script"),       "Logs")
+        self._tabs.addTab(self.disc_view,   QIcon.fromTheme("media-optical-dvd"), "Rip Disc")
+        self._tabs.addTab(self.backup_view, QIcon.fromTheme("drive-harddisk"),     "Backup")
+        self._tabs.addTab(self.log_view,    QIcon.fromTheme("text-x-script"),      "Logs")
 
         self._tabs.currentChanged.connect(self._on_tab_changed)
 
@@ -175,7 +177,8 @@ class MainWindow(QMainWindow):
         menu.addAction("Refresh Drives",  self._on_refresh)
         menu.addAction("Eject Disc",      self._on_eject)
         menu.addSeparator()
-        menu.addAction("Preferences…",   self._on_settings)
+        menu.addAction("Firmware…",       self._on_firmware)
+        menu.addAction("Preferences…",    self._on_settings)
         menu.addSeparator()
         menu.addAction("About Reel…",     self._on_about)
         menu.exec(self._menu_btn.mapToGlobal(
@@ -192,6 +195,19 @@ class MainWindow(QMainWindow):
     def _on_eject(self):
         self.controller.eject_disc()
         self._status_label.setText("Ejecting disc…")
+
+    def _on_firmware(self):
+        if self._firmware_dlg is None:
+            from PyQt5.QtWidgets import QDialog, QVBoxLayout
+            dlg = QDialog(self)
+            dlg.setWindowTitle("Firmware")
+            dlg.resize(700, 580)
+            layout = QVBoxLayout(dlg)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.addWidget(FirmwareView(self.controller))
+            self._firmware_dlg = dlg
+        self._firmware_dlg.show()
+        self._firmware_dlg.raise_()
 
     def _on_settings(self):
         dlg = SettingsDialog(self)
